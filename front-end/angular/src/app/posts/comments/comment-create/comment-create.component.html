@@ -1,0 +1,21 @@
+<div class="container">
+
+    <h3 class="mat-title">Create a comment</h3>
+    <form [appLeave]="canLeave" [formGroup]="form" (ngSubmit)="submit()">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Title</mat-label>
+            <input autofocus matInput formControlName="title" placeholder="Comment title">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Body</mat-label>
+
+            <textarea matInput formControlName="body" placeholder="Comment body"></textarea>
+        </mat-form-field>
+
+
+        <button mat-raised-button color="primary" [disabled]="form.invalid" type="submit">Save</button>
+
+    </form>
+</div>

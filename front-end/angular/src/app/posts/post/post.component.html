@@ -1,0 +1,36 @@
+<mat-card>
+    <mat-card-header>
+
+        <app-avatar [author]="post?.author?.substring(0,1)"></app-avatar>
+        <mat-card-title>{{post?.author}}</mat-card-title>
+        <mat-card-subtitle>{{post?.lastModification|appTimeAgo}}</mat-card-subtitle>
+        <ng-container *appAuthDirective>
+            <ng-container *ngIf="post?.canManage">
+
+                <button style="margin-left:auto" mat-icon-button [matMenuTriggerFor]="menuContextOptions">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menuContextOptions="matMenu">
+                    <a *ngIf="post?.canManage" mat-menu-item color="primary"
+                        [routerLink]="['/posts', post?.id, 'update']">Update</a>
+                    <button *ngIf="post?.canManage" mat-menu-item (click)="deletePost(post.id)">
+                        <span>Delete</span>
+                    </button>
+
+                </mat-menu>
+            </ng-container>
+        </ng-container>
+    </mat-card-header>
+
+    <mat-card-content>
+        <h4>{{post?.title}}</h4>
+        <p>{{post?.body}}
+        </p>
+        <!-- <p>Created at: {{ post?.createdAt|date:'d/MM/yyyy H:m:s a' }}</p> -->
+        <ng-container *ngIf="post?.lastModification!==null">
+            <!-- <p>Last modification: {{ article.lastModification |date:'d/MM/yyyy H:m:s a' }}</p> -->
+
+        </ng-container>
+        <app-comments-container [post]="post" [comments]="post?.comments"></app-comments-container>
+    </mat-card-content>
+</mat-card>

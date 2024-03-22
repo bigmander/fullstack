@@ -1,0 +1,24 @@
+<form [appLeave]="canLeave" [formGroup]="form" (ngSubmit)="submit()">
+
+  <mat-form-field appearance="fill">
+    <mat-label>Title</mat-label>
+    <input autofocus matInput formControlName="title" placeholder="Post title">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Body</mat-label>
+
+    <textarea matInput formControlName="body" placeholder="Post body"></textarea>
+  </mat-form-field>
+
+
+
+  <mat-slide-toggle color="primary" formControlName="canComment">
+    Can Comment
+  </mat-slide-toggle>
+  <br>
+  <br>
+
+  <button mat-raised-button color="primary" [disabled]="form.invalid" type="submit">Save</button>
+
+</form>

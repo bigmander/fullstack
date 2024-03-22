@@ -1,0 +1,39 @@
+<div class="container">
+    <app-signup-successful *ngIf="sucessfullySignedUp"></app-signup-successful>
+
+    <ng-container *ngIf="!sucessfullySignedUp">
+        <form [formGroup]="form" (ngSubmit)="signup(form.value)">
+            <mat-card>
+                <mat-card-header>
+
+                    <mat-card-title>Signup</mat-card-title>
+
+                </mat-card-header>
+
+                <mat-card-content>
+                    <mat-form-field>
+                        <mat-label>Email</mat-label>
+                        <input matInput autofocus type="email" placeholder="Email" formControlName="email">
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Password</mat-label>
+                        <input matInput type="password" placeholder="Password" formControlName="password">
+                    </mat-form-field>
+
+                    <mat-form-field>
+                        <mat-label>Confirm Password</mat-label>
+                        <input matInput type="password" placeholder="Confirm Password"
+                            formControlName="confirmPassword">
+                    </mat-form-field>
+
+
+                </mat-card-content>
+                <mat-card-actions>
+                    <button [disabled]="form.invalid" mat-raised-button color="primary" type="submit">Go</button>
+
+                </mat-card-actions>
+            </mat-card>
+        </form>
+    </ng-container>
+</div>

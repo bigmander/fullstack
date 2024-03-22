@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Application": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DBPATH": "%userprofile%\\Documents\\fullstack\\fullstack.db"
+      }
+    }
+  }
+}

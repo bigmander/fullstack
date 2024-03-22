@@ -1,0 +1,17 @@
+
+<div class="container" *ngIf="posts$ | async as posts">
+    <ng-container *ngIf="posts.length > 0; else noPosts">
+        <app-post [post]="post" *ngFor="let post of posts; let i = index">
+            <!-- <button *appAuthDirective mat-raised-button color="warn" (click)="deletePost(post.id)">Delete</button>
+            <a *appAuthDirective color="primary" mat-raised-button
+                [routerLink]="['/posts', post.id, 'update']">Update</a> -->
+        </app-post>
+        <br>
+    </ng-container>
+    <ng-template #noPosts>
+        <em>No Posts found</em>
+    </ng-template>
+</div>
+<button (click)="goTop()" mat-raised-button class="go-top">
+    Go to top
+</button>

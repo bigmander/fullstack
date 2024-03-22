@@ -1,0 +1,17 @@
+[
+    {
+        "email": "test@test.com",
+        "password": "$2a$10$heoAbTLa1hXljO8BAtrLs.kzeY8lSC1wM6OEb9JeZkwWaydTJjuiy",
+        "id": 1
+    },
+    {
+        "email": "test2@example.com",
+        "password": "$2a$10$3.yvTHv7kddO5GeCegiAYuMlAu96xN8n0Tb6V8fSO9xedZVkKBr6u",
+        "id": 2
+    },
+    {
+        "email": "user@example.com",
+        "password": "$2a$10$2HrxjPqj8bR1z7YZuaD5Q.IUWEs3bjR9EoAsP6NFwwRi07rxpSItW",
+        "id": 3
+    }
+]

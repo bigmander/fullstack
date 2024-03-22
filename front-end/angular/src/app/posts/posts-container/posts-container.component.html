@@ -1,0 +1,19 @@
+<mat-toolbar>
+
+    <mat-toolbar-row>
+        <a mat-button [routerLink]="['/']">Full stack workshop</a>
+        <span class="spacer"></span>
+
+        <button mat-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item *ngIf="!isLoggedIn" routerLink="/login">Login</button>
+            <button mat-menu-item *ngIf="!isLoggedIn" routerLink="/signup">Signup</button>
+            <button *appAuthDirective mat-menu-item routerLink="/posts/create">Create a post</button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item *ngIf="isLoggedIn" routerLink="/logout">Logout</button>
+        </mat-menu>
+    </mat-toolbar-row>
+</mat-toolbar>
+<router-outlet></router-outlet>

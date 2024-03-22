@@ -1,0 +1,48 @@
+<mat-accordion>
+    <mat-expansion-panel [disabled]="!post?.canComment && comments.length === 0">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{comments.length}} Comments
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-list>
+            <mat-list-item *ngFor="let comment of comments">
+                <mat-divider></mat-divider>
+                <header class="comment-header">
+                    <app-avatar [author]="comment.author?.substring(0,1)"></app-avatar>
+                    <div>
+
+                        <h4>{{comment.author}}</h4>
+                        <p>{{comment.createdAt|appTimeAgo}}</p>
+                    </div>
+                    <ng-container *appAuthDirective>
+                        <ng-container *ngIf="comment.canDelete">
+                            <button style="margin-left:auto" mat-icon-button [matMenuTriggerFor]="menuContextOptions">
+                                <mat-icon>more_vert</mat-icon>
+                            </button>
+                            <mat-menu #menuContextOptions="matMenu">
+
+                                <button *ngIf="comment.canDelete" mat-menu-item (click)="deleteComment(comment.id)">
+                                    <span>Delete</span>
+                                </button>
+
+                            </mat-menu>
+                        </ng-container>
+                    </ng-container>
+                </header>
+                <div>
+                    <h5>{{comment.title}}</h5>
+                    <p>{{comment.body}}</p>
+                </div>
+
+            </mat-list-item>
+        </mat-list>
+
+        <ng-container *appAuthDirective>
+            <a *ngIf="post?.canComment" mat-raised-button color="primary"
+                [routerLink]="['/posts', post?.id, 'add-comment']">Add comment</a>
+        </ng-container>
+    </mat-expansion-panel>
+
+</mat-accordion>

@@ -1,0 +1,26 @@
+:host 
+    display: block
+
+:host mat-list-item
+    height: auto
+    margin-bottom: 16px
+
+:host ::ng-deep mat-list mat-list-item.mat-list-item div.mat-list-item-content
+    flex-direction: column
+    align-items: flex-start
+
+:host ::ng-deep .comment-header   
+    display: flex
+    flex-direction: row
+    align-items: flex-start
+    width: 100%
+    
+:host ::ng-deep .comment-header h4,
+:host ::ng-deep .comment-header p 
+    margin: 0
+
+:host ::ng-deep .comment-header div
+    margin-left: 16px
+
+:host ::ng-deep .spacer
+    flex: 1 1 auto
