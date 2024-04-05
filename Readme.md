@@ -16,36 +16,36 @@
 - dotnet run -- %cd%
 
 ### Run project
-- cd %projectpath%\fullstack\back-end\.net\api
-- dotnet run
-- start chrome [Local API server](https://localhost:7297/)
+- `cd %projectpath%\fullstack\back-end\.net\api`
+- `dotnet run`
+- `start chrome https://localhost:7297/`
 
 ## Front-end
 
-- cd %projectpath%\fullstack\front-end\angular
-- npm i
-- code %projectpath%\fullstack\front-end\angular\src\environments\environment.ts
+- `cd %projectpath%\fullstack\front-end\angular`
+- `npm i`
+- `code %projectpath%\fullstack\front-end\angular\src\environments\environment.ts`
 - keep line 7 for mock server
 - keep line 8 for api local server
 
 ### Run project
-- npm run start
-- start chrome [Local Angular server](https://localhost:4200/)
+- `npm run start`
+- `start chrome https://localhost:4200/`
 
 ## Mock-server
 
 ### Setup
-- cd %projectpath%\fullstack\back-end\json-server
-- npm i
-- npm run start
+- `cd %projectpath%\fullstack\back-end\json-server`
+- `npm i`
+- `npm run start`
 
 ## Troubleshooting Front-end
 
 ### Enable ssl (Git bash should be installed)
-- start cmd
-- SET set NODE_OPTIONS=--openssl-legacy-provider
+- `start cmd`
+- `SET set NODE_OPTIONS=--openssl-legacy-provider`
 
 ### Use older version of node
-- Install nvm
+- Install [nvm](https://github.com/coreybutler/nvm-windows/releases)
 - nvm install 12
 - nvm use 12
