@@ -4,14 +4,16 @@
 ## Back-end
 
 ### Installation
-- install [.net cli 6.0](https://download.visualstudio.microsoft.com/download/pr/68ff350e-8b8d-4249-8678-570d5025f8e3/2178c63b5572b6016647525b53aa75b5/dotnet-sdk-6.0.420-win-x64.exe)
+- install [.net sdk 6.0](https://download.visualstudio.microsoft.com/download/pr/68ff350e-8b8d-4249-8678-570d5025f8e3/2178c63b5572b6016647525b53aa75b5/dotnet-sdk-6.0.420-win-x64.exe)
+- install [.net runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.28-windows-x64-installer)
+- run `dotnet tool install --global dotnet-ef`
 
 ### Setup database
 - SET DBPATH=%projectpath%\fullstack\fullstack.db
 - cd %projectpath%\fullstack\back-end\.net\infrastructure
 - dotnet ef database update
 - cd %projectpath%\fullstack\back-end\.net\seeddata
-- dotnet run -- %userprofile%\\Documents\\fullstack\\back-end\\.net\\SeedData
+- dotnet run -- %cd%
 
 ### Run project
 - cd %projectpath%\fullstack\back-end\.net\api
@@ -45,4 +47,5 @@
 
 ### Use older version of node
 - Install nvm
-- nvm use 10 ?
+- nvm install 12
+- nvm use 12

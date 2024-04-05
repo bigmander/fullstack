@@ -10,15 +10,21 @@ static class Program
         try
         {
 
-
             using (var db = new ApplicationDbContext())
             {
                 db.Database.EnsureDeleted();
 
                 db.Database.EnsureCreated();
+
+
                 string basePath = args[0];
-                string postsQuery = File.ReadAllText(basePath+"\\mock-posts.sql");
-                string commentsQuery = File.ReadAllText(basePath+"\\mock-comments.sql");
+
+                string postsQuery = File.ReadAllText(
+                    Path.Combine(basePath, "mock-posts.sql")
+                );
+                string commentsQuery = File.ReadAllText(
+                    Path.Combine(basePath, "mock-comments.sql")
+                );
 
                 db.Database.ExecuteSqlRaw(postsQuery);
 
@@ -30,6 +36,6 @@ static class Program
             Console.Error.WriteLine(ex);
         }
     }
-    
+
 
 }
