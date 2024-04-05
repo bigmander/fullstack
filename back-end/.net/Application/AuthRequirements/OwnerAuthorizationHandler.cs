@@ -8,17 +8,6 @@ public class OwnerAuthorizationHandler :
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, OwnerRequirement requirement, IManageableResource resource)
     {
-
-        if (resource == null)
-            return Task.CompletedTask;
-
-        string author = context.User?.Identity?.Name;
-        if (resource.IsAuthToManage(author))
-        {
-            
-            context.Succeed(requirement);
-        }
-
         return Task.CompletedTask;
     }
 }

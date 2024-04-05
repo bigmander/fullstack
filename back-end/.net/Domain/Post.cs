@@ -26,12 +26,7 @@ public class Post : Entity, IManageableResource
 
         _comments.Add(comment);
     }
-    public bool IsAuthToComment()
-    {
-
-        return CanComment;
-    }
-    public bool IsAuthToManage(string author)
+    public bool CanManage(string author)
     {
         return !string.IsNullOrEmpty(author) && author == CreatedBy;
     }

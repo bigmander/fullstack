@@ -25,7 +25,7 @@ public class PostDTO
         CanComment = p.CanComment;
         _comments = p.Comments.Select(c => new CommentDTO(c, author)).ToList();
         Title = p.Title;
-        CanManage = p.CreatedBy == author;
+        CanManage = p.CanManage(author);
         CreatedAt = p.CreatedOn;
         LastModification = p.UpdatedOn;
     }
