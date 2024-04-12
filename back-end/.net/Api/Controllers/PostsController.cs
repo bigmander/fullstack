@@ -62,7 +62,5 @@ public class PostsController : ControllerBase
     public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostModel model)
     {
         return AcceptedAtAction(nameof(GetById), new { id }, model);
-    }
-
-    
+    }   
 }

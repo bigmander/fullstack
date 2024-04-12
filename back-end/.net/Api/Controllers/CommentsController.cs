@@ -19,7 +19,6 @@ namespace Api.Controllers
 
         public async Task<IActionResult> DeleteCommentById(Guid id)
         {
-
             return NoContent();
         }
     }
