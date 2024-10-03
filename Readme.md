@@ -1,4 +1,5 @@
-# General setup
+# General 
+- SET projectpath=`wherever you cloned the project`
 - clone project into %projectpath%
 
 ## Back-end
@@ -6,7 +7,9 @@
 ### Installation
 - install [.net sdk 6.0](https://download.visualstudio.microsoft.com/download/pr/68ff350e-8b8d-4249-8678-570d5025f8e3/2178c63b5572b6016647525b53aa75b5/dotnet-sdk-6.0.420-win-x64.exe)
 - install [.net runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.28-windows-x64-installer)
+- install [c# vs code extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp) (optional)
 - run `dotnet tool install --global dotnet-ef --version=6.0.0`
+
 
 ### Setup database
 - SET DBPATH=%projectpath%\fullstack\fullstack.db
