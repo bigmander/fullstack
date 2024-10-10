@@ -1,2 +1,3 @@
 *.code-workspace
-*.db
+fullstack.*
+front-end/react-fe/node_modules

@@ -1,7 +1,10 @@
-﻿using Application.Repositories;
+﻿using Api.DTOs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
+using System.Text.Json;
+using IOFile = System.IO.File;
 
 namespace Api.Controllers
 {
@@ -9,9 +12,20 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class CommentsController : ControllerBase
     {
+        readonly IEnumerable<PostDTO>? _posts;
+
         public CommentsController(
         )
         {
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Assets\data.json");
+
+            string json = IOFile.ReadAllText(path);
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            _posts = JsonSerializer.Deserialize<IEnumerable<PostDTO>>(json, options);
         }
 
         [HttpDelete("{id}")]
@@ -19,6 +33,17 @@ namespace Api.Controllers
 
         public async Task<IActionResult> DeleteCommentById(Guid id)
         {
+            var comment = _posts.Select(p => new PostDTO(p, User.Identity.Name))
+                .SelectMany(p => p.Comments).FirstOrDefault(p => p.Id == id);
+            
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            if (!comment.CanDelete)
+            {
+                return Forbid();
+            }
             return NoContent();
         }
     }
