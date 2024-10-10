@@ -86,6 +86,6 @@ public class PostsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostModel model)
     {
-        return AcceptedAtAction(nameof(GetById), new { id }, found);
+        return AcceptedAtAction(nameof(GetById), new { id }, model);
     }
 }
