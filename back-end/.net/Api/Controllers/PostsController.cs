@@ -18,6 +18,12 @@ public class PostsController : ControllerBase
 
     public PostsController()
     {
+        LoadInfo();
+
+    }
+
+    void LoadInfo()
+    {
         string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Assets\data.json");
 
         string json = IOFile.ReadAllText(path);
@@ -27,7 +33,6 @@ public class PostsController : ControllerBase
             PropertyNameCaseInsensitive = true
         };
         _posts = JsonSerializer.Deserialize<IEnumerable<PostDTO>>(json, options);
-
     }
 
     IEnumerable<PostDTO> PreparePosts(string author)
@@ -44,14 +49,7 @@ public class PostsController : ControllerBase
         [FromQuery(Name = "q")] string? search = ""
     )
     {
-        var result = PreparePosts(User.Identity.Name)
-            .Where(p =>
-                string.IsNullOrEmpty(search) ||
-                p.Title.StartsWith(search, StringComparison.CurrentCultureIgnoreCase) ||
-                p.Body.StartsWith(search, StringComparison.CurrentCultureIgnoreCase)
-        );
-
-        return Ok(result);
+        return Ok(search);
     }
 
     [AllowAnonymous]
@@ -59,59 +57,28 @@ public class PostsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var post = PreparePosts(User.Identity.Name).FirstOrDefault(p => p.Id == id);
-        if (post == null)
-        {
-            return NotFound(post);
-        }
-        return Ok(new PostDTO(post, User.Identity.Name));
+        
+        return Ok(id);
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("{id}/comments")]
     public async Task<IActionResult> AddComment(Guid id, [FromBody] NewCommentModel model)
     {
-        var post = PreparePosts(User.Identity.Name).FirstOrDefault(p => p.Id == id);
-        if (post == null)
-        {
-            return NotFound(post);
-        }
-
-        if (!post.CanComment)
-        {
-            return Forbid();
-        }
-
-        var newComment = new CommentDTO(model.Title, model.Body, post.Id, User.Identity.Name, post.Author);
-        return CreatedAtAction(nameof(GetById), new { id }, newComment);
+        return CreatedAtAction(nameof(GetById), new { id }, model);
     }
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> AddPost([FromBody] NewPostModel model)
     {
-        var newPost = new PostDTO(
-            model.Title, 
-            model.Body, 
-            model.CanComment,
-            User.Identity.Name
-        );
-        return CreatedAtAction(nameof(GetById), new { id = newPost.Id }, newPost);
+        return CreatedAtAction(nameof(GetById), new { id = Guid.NewGuid() }, model);
     }
 
     [HttpDelete("{id}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeletePostById(Guid id)
     {
-        var found = PreparePosts(User.Identity.Name).FirstOrDefault(p => p.Id == id);
-        if (found == null)
-        {
-            return NotFound(found);
-        }
-        if (!found.CanManage)
-        {
-            return Forbid();
-        }
         return NoContent();
     }
 
@@ -119,20 +86,6 @@ public class PostsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostModel model)
     {
-        var found = PreparePosts(User.Identity.Name).FirstOrDefault(p => p.Id == id);
-        if (found == null)
-        {
-            return NotFound(found);
-        }
-
-        if (!found.CanManage)
-        {
-            return Forbid();
-        }
-
-        
-        found.Update(model.Title, model.Body, model.CanComment, User.Identity.Name);
-
         return AcceptedAtAction(nameof(GetById), new { id }, found);
     }
 }

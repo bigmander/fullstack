@@ -33,17 +33,6 @@ namespace Api.Controllers
 
         public async Task<IActionResult> DeleteCommentById(Guid id)
         {
-            var comment = _posts.Select(p => new PostDTO(p, User.Identity.Name))
-                .SelectMany(p => p.Comments).FirstOrDefault(p => p.Id == id);
-            
-            if (comment == null)
-            {
-                return NotFound();
-            }
-            if (!comment.CanDelete)
-            {
-                return Forbid();
-            }
             return NoContent();
         }
     }
