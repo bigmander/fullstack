@@ -29,6 +29,7 @@ static class Program
                 db.Database.ExecuteSqlRaw(postsQuery);
 
                 db.Database.ExecuteSqlRaw(commentsQuery);
+
             }
         }
         catch (Exception ex)

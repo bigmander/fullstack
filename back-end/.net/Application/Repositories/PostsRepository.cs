@@ -1,6 +1,5 @@
 ﻿using Domain;
 using Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Repositories;
 
