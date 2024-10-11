@@ -49,7 +49,7 @@ public class PostsController : ControllerBase
         [FromQuery(Name = "q")] string? search = ""
     )
     {
-        return Ok(search);
+        return Ok(PreparePosts(User.Identity.Name));
     }
 
     [AllowAnonymous]
@@ -57,28 +57,42 @@ public class PostsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        
-        return Ok(id);
-    }
+        var posts = PreparePosts(User.Identity.Name);
 
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [HttpPost("{id}/comments")]
-    public async Task<IActionResult> AddComment(Guid id, [FromBody] NewCommentModel model)
-    {
-        return CreatedAtAction(nameof(GetById), new { id }, model);
+        var post = posts.FirstOrDefault(p => p.Id == id);
+
+        if (post == null) {
+            return NotFound();
+        }
+
+        return Ok(post);
     }
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> AddPost([FromBody] NewPostModel model)
     {
-        return CreatedAtAction(nameof(GetById), new { id = Guid.NewGuid() }, model);
+        var post = new PostDTO(model.Title, model.Body, model.CanComment, User.Identity.Name);
+        
+        return CreatedAtAction(nameof(GetById), new { id = post.Id }, post);
     }
 
     [HttpDelete("{id}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeletePostById(Guid id)
     {
+        var posts = PreparePosts(User.Identity.Name);
+
+        var post = posts.FirstOrDefault(p => p.Id == id);
+
+        if (post == null) {
+            return NotFound();
+        }
+
+        if (!post.CanManage) {
+            return Forbid();
+        }
+
         return NoContent();
     }
 
@@ -86,6 +100,43 @@ public class PostsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostModel model)
     {
-        return AcceptedAtAction(nameof(GetById), new { id }, model);
+        var posts = PreparePosts(User.Identity.Name);
+
+        var post = posts.FirstOrDefault(p => p.Id == id);
+
+        if (post == null) {
+            return NotFound();
+        }
+
+        if (!post.CanManage) {
+            return Forbid();
+        }
+
+        post.Update(model.Title, model.Body, model.CanComment, User.Identity.Name);
+
+        return AcceptedAtAction(nameof(GetById), new { id = post.Id }, post);
     }
+
+    
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [HttpPost("{id}/comments")]
+    public async Task<IActionResult> AddComment(Guid id, [FromBody] NewCommentModel model)
+    {
+        var posts = PreparePosts(User.Identity.Name);
+
+        var post = posts.FirstOrDefault(p => p.Id == id);
+
+        if (post == null) {
+            return NotFound();
+        }
+
+        if (!post.CanComment) {
+            return BadRequest();
+        }
+
+        var comment = new CommentDTO(model.Title, model.Body, post.Id, User.Identity.Name, post.Author);
+
+        return CreatedAtAction(nameof(GetById), new { id = post.Id }, comment);
+    }
+
 }

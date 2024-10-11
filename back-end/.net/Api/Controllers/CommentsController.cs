@@ -27,12 +27,30 @@ namespace Api.Controllers
             };
             _posts = JsonSerializer.Deserialize<IEnumerable<PostDTO>>(json, options);
         }
+        IEnumerable<PostDTO> PreparePosts(string author)
+        {
+            return _posts
+                .Select(p => new PostDTO(p, author));
+        }
 
         [HttpDelete("{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
         public async Task<IActionResult> DeleteCommentById(Guid id)
         {
+            var posts = PreparePosts(User.Identity.Name);
+
+            var comment = posts.SelectMany(p => p.Comments)
+                .FirstOrDefault(c => c.Id == id);
+
+            if (comment == null) {
+                return NotFound();
+            }
+
+            if (!comment.CanDelete) {
+                return Forbid();
+            }
+
             return NoContent();
         }
     }
