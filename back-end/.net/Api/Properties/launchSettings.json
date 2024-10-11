@@ -15,7 +15,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DBPATH": ""
+        "DBPATH": "%userprofile%\\Documents\\fullstack\\fullstack.db"
       },
       "applicationUrl": "https://localhost:7297;http://localhost:5215",
       "dotnetRunMessages": true

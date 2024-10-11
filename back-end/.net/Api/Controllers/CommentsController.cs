@@ -1,10 +1,8 @@
 ﻿using Api.DTOs;
+using Application.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
-using System.Text.Json;
-using IOFile = System.IO.File;
 
 namespace Api.Controllers
 {
@@ -12,25 +10,12 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class CommentsController : ControllerBase
     {
-        readonly IEnumerable<PostDTO>? _posts;
+        readonly CommentsRepository _commentsRepository;
 
         public CommentsController(
-        )
-        {
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Assets\data.json");
-
-            string json = IOFile.ReadAllText(path);
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-            _posts = JsonSerializer.Deserialize<IEnumerable<PostDTO>>(json, options);
-        }
-        IEnumerable<PostDTO> PreparePosts(string author)
-        {
-            return _posts
-                .Select(p => new PostDTO(p, author));
+            CommentsRepository commentsRepository
+        ) {
+            _commentsRepository = commentsRepository;    
         }
 
         [HttpDelete("{id}")]
@@ -38,18 +23,19 @@ namespace Api.Controllers
 
         public async Task<IActionResult> DeleteCommentById(Guid id)
         {
-            var posts = PreparePosts(User.Identity.Name);
-
-            var comment = posts.SelectMany(p => p.Comments)
-                .FirstOrDefault(c => c.Id == id);
+            var comment = await _commentsRepository.GetAsync(id);
 
             if (comment == null) {
                 return NotFound();
             }
 
-            if (!comment.CanDelete) {
+            var dto = new CommentDTO(comment, User.Identity.Name);
+            if (!dto.CanDelete) {
                 return Forbid();
             }
+
+            await _commentsRepository.DeleteAsync(comment);
+            await _commentsRepository.SaveChangesAsync();
 
             return NoContent();
         }

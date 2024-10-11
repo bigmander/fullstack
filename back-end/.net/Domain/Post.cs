@@ -17,7 +17,6 @@ public class Post : Entity, IManageableResource
         Title = title;
         Body = body;
         CanComment = canComment;
-
     }
 
     public void AddComment(string name, string body, string author)

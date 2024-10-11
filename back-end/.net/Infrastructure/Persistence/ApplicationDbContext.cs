@@ -17,7 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     {
 
     }
-   protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Comment>(builder =>
         {
@@ -32,12 +32,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         {
             builder.HasKey(p => p.Id);
         });
-            
 
         base.OnModelCreating(modelBuilder);
-        
-}
-
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -45,7 +42,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
 
         base.OnConfiguring(optionsBuilder);
     }
-
 
     public DbSet<Post> Posts { get; set; }
     public DbSet<Comment> Comments { get; set; }
