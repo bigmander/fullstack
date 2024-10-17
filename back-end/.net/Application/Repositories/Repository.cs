@@ -13,6 +13,7 @@ public class Repository<TEntity>
     public Repository(ApplicationDbContext context)
     {
         _context = context;
+        
         _entities = _context.Set<TEntity>();
     }
 

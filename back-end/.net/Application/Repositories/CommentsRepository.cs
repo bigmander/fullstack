@@ -6,5 +6,6 @@ namespace Application.Repositories;
 public class CommentsRepository : Repository<Comment>
 {
     public CommentsRepository(ApplicationDbContext context) : base(context)
-    { }
+    { 
+    }
 }

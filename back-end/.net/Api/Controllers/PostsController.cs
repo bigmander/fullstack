@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using IOFile = System.IO.File;
 using System.Reflection;
+using Application.Repositories;
 
 namespace Api.Controllers;
 
@@ -15,10 +16,12 @@ namespace Api.Controllers;
 public class PostsController : ControllerBase
 {
     IEnumerable<PostDTO> _posts;
-
-    public PostsController()
+    readonly PostsRepository _postsRepository;
+    public PostsController(PostsRepository postsRepository)
     {
         LoadInfo();
+
+        _postsRepository = postsRepository;
 
     }
 
@@ -49,7 +52,8 @@ public class PostsController : ControllerBase
         [FromQuery(Name = "q")] string? search = ""
     )
     {
-        return Ok(PreparePosts(User.Identity.Name));
+        var posts = await _postsRepository.GetAsync();
+        return Ok(posts.Select(p => new PostDTO(p, User.Identity.Name)));
     }
 
     [AllowAnonymous]
