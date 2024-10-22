@@ -15,36 +15,14 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public class PostsController : ControllerBase
 {
-    IEnumerable<PostDTO> _posts;
     readonly PostsRepository _postsRepository;
     readonly CommentsRepository _commentsRepository;
     public PostsController(PostsRepository postsRepository, CommentsRepository commentsRepository)
     {
-        LoadInfo();
-
         _postsRepository = postsRepository;
         _commentsRepository = commentsRepository;
-
     }
 
-    void LoadInfo()
-    {
-        string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Assets\data.json");
-
-        string json = IOFile.ReadAllText(path);
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-        _posts = JsonSerializer.Deserialize<IEnumerable<PostDTO>>(json, options);
-    }
-
-    IEnumerable<PostDTO> PreparePosts(string author)
-    {
-        return _posts
-            .Select(p => new PostDTO(p, author));
-    }
 
 
     [AllowAnonymous]
@@ -93,19 +71,21 @@ public class PostsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeletePostById(Guid id)
     {
-        var posts = PreparePosts(User.Identity.Name);
-
-        var post = posts.FirstOrDefault(p => p.Id == id);
+        
+        var post = await _postsRepository.GetAsync(id);
 
         if (post == null)
         {
             return NotFound();
         }
 
-        if (!post.CanManage)
+        if (!post.CanManage(User.Identity.Name))
         {
             return Forbid();
         }
+
+        await _postsRepository.DeleteAsync(post);
+        await _postsRepository.SaveChangesAsync();
 
         return NoContent();
     }

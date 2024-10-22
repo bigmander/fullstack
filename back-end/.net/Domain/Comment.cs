@@ -16,4 +16,10 @@ public class Comment : Entity
         Title = title;
         Body = body;
     }
+
+    public bool CanManage(string? name)
+    {
+        return CreatedBy == name || 
+                (Post != null && Post.CreatedBy == name);
+    }
 }
