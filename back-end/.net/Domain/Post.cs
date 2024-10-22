@@ -37,9 +37,9 @@ public class Post : Entity, IManageableResource
         CanComment = canComment;
     }
 
-    public Post(string title, string body, bool canComment, string createdBy, IEnumerable<Comment> comments) : 
+    public Post(string title, string body, bool canComment, string createdBy, IEnumerable<Comment> comments) :
         this(title, body, canComment, createdBy)
     {
         _comments.AddRange(comments);
-    } 
+    }
 }

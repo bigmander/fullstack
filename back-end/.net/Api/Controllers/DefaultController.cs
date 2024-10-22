@@ -21,7 +21,7 @@ public class DefaultController : ControllerBase
     [HttpPost("[action]")]
     public async Task<IActionResult> Login(LoginModel model)
     {
-        
+
 
         var user = await _userManager.FindByEmailAsync(model.Email);
 
@@ -36,23 +36,19 @@ public class DefaultController : ControllerBase
         }
 
         var token = JwtHelper.GenerateToken(new ApplicationToken
-        {
-            Email = model.Email,
-            UserName = user.UserName,
-            Id = user.Id,
-        }, _settings);
+        (
+            user.Id,
+            model.Email,
+            user.UserName
+        ), _settings);
 
-        return Ok(new AuthenticatedUserModel
-        {
-            AccessToken = token.Token
-            
-        });
+        return Ok(new AuthenticatedUserModel(token.Token));
     }
 
     [HttpPost("[action]")]
     public async Task<IActionResult> Signup(SignupModel model)
     {
-        
+
 
         var user = new ApplicationUser
         {
@@ -60,11 +56,11 @@ public class DefaultController : ControllerBase
             UserName = model.Email,
 
         };
-        
+
         var result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded) return BadRequest(result.Errors);
 
-        
+
 
         return Accepted();
     }

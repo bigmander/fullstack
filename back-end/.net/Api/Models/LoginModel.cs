@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Api.Models;
-public class LoginModel 
+public class LoginModel
 {
     [Required]
     [EmailAddress]

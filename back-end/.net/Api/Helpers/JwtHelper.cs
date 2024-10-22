@@ -28,26 +28,28 @@ public static class JwtHelper
     {
         try
         {
-            var UserToken = new ApplicationToken();
-            if (model == null) throw new ArgumentException(nameof(model));
+            if (model == null) {
+                throw new ArgumentNullException(nameof(model));
+            }
             // Get secret key
             var key = Encoding.ASCII.GetBytes(jwtSettings.IssuerSigningKey);
             Guid Id = Guid.Empty;
             DateTime expireTime = DateTime.UtcNow.AddHours(1);
             var JWToken = new JwtSecurityToken(
-                issuer: jwtSettings.ValidIssuer, 
-                audience: jwtSettings.ValidAudience, 
-                claims: GetClaims(model, out Id), 
-                notBefore: new DateTimeOffset(DateTime.Now).DateTime, 
-                expires: new DateTimeOffset(expireTime).DateTime, 
+                issuer: jwtSettings.ValidIssuer,
+                audience: jwtSettings.ValidAudience,
+                claims: GetClaims(model, out Id),
+                notBefore: new DateTimeOffset(DateTime.Now).DateTime,
+                expires: new DateTimeOffset(expireTime).DateTime,
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             );
-            UserToken.Token = new JwtSecurityTokenHandler().WriteToken(JWToken);
-            UserToken.UserName = model.UserName;
-            UserToken.Id = model.Id;
-            UserToken.ExpiredDate = expireTime;
-            
-            return UserToken;
+            return new ApplicationToken(
+                model.Id,
+                model.UserName,
+                model.Email,
+                new JwtSecurityTokenHandler().WriteToken(JWToken),
+                expireTime
+            );
         }
         catch (Exception)
         {

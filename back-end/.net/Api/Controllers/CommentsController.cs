@@ -43,11 +43,13 @@ namespace Api.Controllers
             var comment = posts.SelectMany(p => p.Comments)
                 .FirstOrDefault(c => c.Id == id);
 
-            if (comment == null) {
+            if (comment == null)
+            {
                 return NotFound();
             }
 
-            if (!comment.CanDelete) {
+            if (!comment.CanDelete)
+            {
                 return Forbid();
             }
 

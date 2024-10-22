@@ -1,6 +1,5 @@
 using Api.DTOs;
 using Api.Models;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +7,7 @@ using System.Text.Json;
 using IOFile = System.IO.File;
 using System.Reflection;
 using Application.Repositories;
+using Domain;
 
 namespace Api.Controllers;
 
@@ -17,11 +17,13 @@ public class PostsController : ControllerBase
 {
     IEnumerable<PostDTO> _posts;
     readonly PostsRepository _postsRepository;
-    public PostsController(PostsRepository postsRepository)
+    readonly CommentsRepository _commentsRepository;
+    public PostsController(PostsRepository postsRepository, CommentsRepository commentsRepository)
     {
         LoadInfo();
 
         _postsRepository = postsRepository;
+        _commentsRepository = commentsRepository;
 
     }
 
@@ -53,7 +55,9 @@ public class PostsController : ControllerBase
     )
     {
         var posts = await _postsRepository.GetAsync();
-        return Ok(posts.Select(p => new PostDTO(p, User.Identity.Name)));
+
+        var result = posts.Select(p => new PostDTO(p, User.Identity.Name));
+        return Ok(result);
     }
 
     [AllowAnonymous]
@@ -61,24 +65,28 @@ public class PostsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var posts = PreparePosts(User.Identity.Name);
+        var post = await _postsRepository.GetAsync(id);
 
-        var post = posts.FirstOrDefault(p => p.Id == id);
-
-        if (post == null) {
+        if (post == null)
+        {
             return NotFound();
         }
 
-        return Ok(post);
+        return Ok(new PostDTO(post, User.Identity.Name));
     }
 
     [HttpPost]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> AddPost([FromBody] NewPostModel model)
     {
-        var post = new PostDTO(model.Title, model.Body, model.CanComment, User.Identity.Name);
-        
-        return CreatedAtAction(nameof(GetById), new { id = post.Id }, post);
+        var post = new Post(model.Title, model.Body
+            , model.CanComment, User.Identity.Name);
+
+        await _postsRepository.InsertAsync(post);
+
+        await _postsRepository.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetById), new { id = post.Id }, new PostDTO(post, User.Identity.Name));
     }
 
     [HttpDelete("{id}")]
@@ -89,11 +97,13 @@ public class PostsController : ControllerBase
 
         var post = posts.FirstOrDefault(p => p.Id == id);
 
-        if (post == null) {
+        if (post == null)
+        {
             return NotFound();
         }
 
-        if (!post.CanManage) {
+        if (!post.CanManage)
+        {
             return Forbid();
         }
 
@@ -104,43 +114,48 @@ public class PostsController : ControllerBase
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> UpdatePost(Guid id, [FromBody] UpdatePostModel model)
     {
-        var posts = PreparePosts(User.Identity.Name);
 
-        var post = posts.FirstOrDefault(p => p.Id == id);
+        var post = await _postsRepository.GetAsync(id);
 
-        if (post == null) {
+        if (post == null)
+        {
             return NotFound();
         }
 
-        if (!post.CanManage) {
+        if (!post.CanManage(User.Identity.Name))
+        {
             return Forbid();
         }
 
-        post.Update(model.Title, model.Body, model.CanComment, User.Identity.Name);
+        post.Update(User.Identity.Name, model.Title, model.Body, model.CanComment);
+        await _postsRepository.UpdateAsync(post);
+        await _postsRepository.SaveChangesAsync();
 
         return AcceptedAtAction(nameof(GetById), new { id = post.Id }, post);
     }
 
-    
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("{id}/comments")]
     public async Task<IActionResult> AddComment(Guid id, [FromBody] NewCommentModel model)
     {
-        var posts = PreparePosts(User.Identity.Name);
+        var post = await _postsRepository.GetAsync(id);
 
-        var post = posts.FirstOrDefault(p => p.Id == id);
-
-        if (post == null) {
+        if (post == null)
+        {
             return NotFound();
         }
 
-        if (!post.CanComment) {
+        if (!post.CanComment)
+        {
             return BadRequest();
         }
 
-        var comment = new CommentDTO(model.Title, model.Body, post.Id, User.Identity.Name, post.Author);
+        var comment = new Comment(post, model.Title, model.Body, User.Identity.Name);
+        await _commentsRepository.InsertAsync(comment);
+        await _commentsRepository.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetById), new { id = post.Id }, comment);
+        return CreatedAtAction(nameof(GetById), new { id = post.Id }, new PostDTO(post, User.Identity.Name));
     }
 
 }

@@ -16,7 +16,6 @@ static class Program
 
                 db.Database.EnsureCreated();
 
-
                 string basePath = args[0];
 
                 string postsQuery = File.ReadAllText(

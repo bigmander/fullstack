@@ -14,4 +14,9 @@ public class PostsRepository : Repository<Post>
     {
         return await _entities.Include(p => p.Comments).ToListAsync();
     }
+
+    public override async Task<Post?> GetAsync(Guid id)
+    {
+        return await _entities.Include(p => p.Comments).FirstAsync(p => p.Id == id);
+    }
 }

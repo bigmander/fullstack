@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Repositories;
 
-public class Repository<TEntity> 
+public class Repository<TEntity>
     where TEntity : Entity
 {
     protected readonly ApplicationDbContext _context;
@@ -13,13 +13,12 @@ public class Repository<TEntity>
     public Repository(ApplicationDbContext context)
     {
         _context = context;
-        
+
         _entities = _context.Set<TEntity>();
     }
-
     public virtual async Task<bool> ExistsAsync(Guid id)
     {
-        return await _entities.AnyAsync(e=> e.Id == id);
+        return await _entities.AnyAsync(e => e.Id == id);
     }
 
     public virtual async Task<IEnumerable<TEntity>> GetAsync()
@@ -27,9 +26,9 @@ public class Repository<TEntity>
         return await _entities.ToListAsync();
     }
 
-    public virtual async Task<TEntity?> GetAsync(Guid id) 
+    public virtual async Task<TEntity?> GetAsync(Guid id)
     {
-        return await _entities.FirstOrDefaultAsync( e => e.Id.Equals(id));
+        return await _entities.FirstOrDefaultAsync(e => e.Id == id);
     }
 
     public virtual Task InsertAsync(TEntity entity)

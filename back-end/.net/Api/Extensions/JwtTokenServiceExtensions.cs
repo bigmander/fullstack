@@ -12,14 +12,16 @@ public static class JwtTokenServiceExtensions
         var bindJwtSettings = new JwtSettings();
         Configuration.Bind("JsonWebTokenKeys", bindJwtSettings);
         Services.AddSingleton(bindJwtSettings);
-        Services.AddAuthentication(options => {
+        Services.AddAuthentication(options =>
+        {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            
-        }).AddJwtBearer(options => {
+
+        }).AddJwtBearer(options =>
+        {
             options.RequireHttpsMetadata = false;
             options.SaveToken = true;
-            
+
             options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = bindJwtSettings.ValidateIssuerSigningKey,
