@@ -1,9 +1,5 @@
 import React from "react"
-interface PostFormProps {
-    title: string;
-    body: string;
-    canComment: boolean;
-}
+import { PostFormProps } from "./PostFormProps";
 const PostForm: React.FC<Partial<PostFormProps>> = (props = {
     body: '',
     canComment: false,
