@@ -12,18 +12,19 @@ public static class JwtTokenServiceExtensions
         var bindJwtSettings = new JwtSettings();
         Configuration.Bind("JsonWebTokenKeys", bindJwtSettings);
         Services.AddSingleton(bindJwtSettings);
-        Services.AddAuthentication(options => {
+        Services.AddAuthentication(options =>
+        {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            
-        }).AddJwtBearer(options => {
+
+        }).AddJwtBearer(options =>
+        {
             options.RequireHttpsMetadata = false;
             options.SaveToken = true;
-            
+
             options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = bindJwtSettings.ValidateIssuerSigningKey,
-                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(bindJwtSettings.IssuerSigningKey)),
                 ValidateIssuer = bindJwtSettings.ValidateIssuer,
                 ValidIssuer = bindJwtSettings.ValidIssuer,
                 ValidateAudience = bindJwtSettings.ValidateAudience,
@@ -31,6 +32,7 @@ public static class JwtTokenServiceExtensions
                 RequireExpirationTime = bindJwtSettings.RequireExpirationTime,
                 ValidateLifetime = bindJwtSettings.RequireExpirationTime,
                 ClockSkew = TimeSpan.FromDays(1),
+                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(bindJwtSettings.IssuerSigningKey)),
             };
         });
     }

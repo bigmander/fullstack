@@ -4,11 +4,11 @@
 
 export const environment = {
   production: false,
-  stage: 'mock',
-  apiUrl: 'http://localhost:3000'
+  // stage: 'mock',
+  // apiUrl: 'http://localhost:3000'
 
-  // stage:'local', 
-  // apiUrl: 'https://localhost:7297/api'
+  stage:'local', 
+  apiUrl: 'https://localhost:7297/api'
 };
 
 /*

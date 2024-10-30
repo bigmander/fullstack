@@ -13,7 +13,7 @@ instance.interceptors.request.use((config) => {
 
         const session = JSON.parse(rawSession);
         if (session.accessToken) {
-            config.headers.Authorization = `Bearer: ${session.accessToken}`;
+            config.headers.Authorization = `Bearer ${session.accessToken}`;
         }
     }
     return config;

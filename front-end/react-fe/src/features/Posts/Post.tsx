@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, Button, Menu, MenuItem } from "@mui/material";
+import Comment from "../Comments/Comment";
 
 const Post: React.FC<PostProps> = ({
     post
@@ -60,8 +61,7 @@ const Post: React.FC<PostProps> = ({
         <Accordion >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>{post.comments.length} comments</AccordionSummary>
             <AccordionDetails>
-
-                <p>{JSON.stringify(post.comments)}</p>
+                {post.comments.map(comment => <Comment comment={comment} />)}
                 {!post.canComment && <Button variant="contained">Add comment</Button>}
             </AccordionDetails>
         </Accordion>

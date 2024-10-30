@@ -11,11 +11,13 @@ public static class JwtHelper
     public static IEnumerable<Claim> GetClaims(this ApplicationToken userAccount, Guid Id)
     {
         IEnumerable<Claim> claims = new Claim[] {
-                new Claim("Id", userAccount.Id.ToString()),
-                    new Claim(ClaimTypes.Name, userAccount.UserName),
-                    new Claim(ClaimTypes.Email, userAccount.Email),
-                    new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
-                    new Claim(ClaimTypes.Expiration, DateTime.UtcNow.AddHours(1).ToString("MMM ddd dd yyyy HH:mm:ss tt"))
+                new Claim("id", userAccount.Id.ToString()),
+                new Claim(ClaimTypes.Name, userAccount.UserName),
+                new Claim(ClaimTypes.Role, "user"),
+
+                new Claim(ClaimTypes.Email, userAccount.Email),
+                new Claim(ClaimTypes.NameIdentifier, Id.ToString()),
+                new Claim(ClaimTypes.Expiration, DateTime.UtcNow.AddHours(1).ToString("MMM ddd dd yyyy HH:mm:ss tt"))
             };
         return claims;
     }
@@ -35,18 +37,18 @@ public static class JwtHelper
             Guid Id = Guid.Empty;
             DateTime expireTime = DateTime.UtcNow.AddHours(1);
             var JWToken = new JwtSecurityToken(
-                issuer: jwtSettings.ValidIssuer, 
-                audience: jwtSettings.ValidAudience, 
-                claims: GetClaims(model, out Id), 
-                notBefore: new DateTimeOffset(DateTime.Now).DateTime, 
-                expires: new DateTimeOffset(expireTime).DateTime, 
+                issuer: jwtSettings.ValidIssuer,
+                audience: jwtSettings.ValidAudience,
+                claims: GetClaims(model, out Id),
+                notBefore: new DateTimeOffset(DateTime.Now).DateTime,
+                expires: new DateTimeOffset(expireTime).DateTime,
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             );
             UserToken.Token = new JwtSecurityTokenHandler().WriteToken(JWToken);
             UserToken.UserName = model.UserName;
             UserToken.Id = model.Id;
             UserToken.ExpiredDate = expireTime;
-            
+
             return UserToken;
         }
         catch (Exception)
