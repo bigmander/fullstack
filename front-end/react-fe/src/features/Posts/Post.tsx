@@ -1,70 +1,65 @@
 import React, { useState } from "react"
 import httpService from '../../shared/services/HttpService';
 import { PostProps } from "./PostProps";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem } from "@mui/material";
 import Comment from "../Comments/Comment";
+import ActionsMenu from "../../shared/comps/ActionsMenu";
+import { getRandomColor } from "../../shared/services/Utils";
 
 const Post: React.FC<PostProps> = ({
     post
 }) => {
     const navigate = useNavigate();
-    const [$menu, set$Menu] = useState<HTMLElement | null>(null);
     const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
-    // const isMenuOpen = Boolean($menu);
-    const handleClose = () => {
-        if ($menu !== null) {
-            set$Menu(null);
-        }
-    };
-    const handleOpen = (e: React.MouseEvent<HTMLElement>): void => {
-        e.stopPropagation();
 
-        if ($menu === null) {
-            set$Menu(e.currentTarget)
-        }
-    };
-
+    const randomColor = getRandomColor();
     return <>
         <Card variant="outlined">
             <CardHeader
                 title={post.title}
                 subheader={post.createdAt.toString()}
-                avatar={<Avatar>{post.author.substring(0, 1)}</Avatar>}
+
+                avatar={
+                    <Avatar
+                        sx={{
+                            backgroundColor: randomColor
+                        }}
+                    >
+                        {post.author.substring(0, 1)}
+                    </Avatar>
+                }
                 action={
-                    post.canManage ? <IconButton onClick={handleOpen}>
-                        <MoreVertIcon />
+                    post.canManage ?
+                        <ActionsMenu
+                            actionsList={[{
+                                action: () => {
+                                    navigate('/posts/' + post.id)
+                                },
+                                label: 'Edit'
+                            }, {
 
-                        <Menu
-                            anchorEl={$menu}
-                            open={$menu !== null}
-                            onClose={handleClose}
-                        >
-                            <MenuItem >
-                                <Link to={`/posts/${post.id}`}>Edit</Link>
-                            </MenuItem>
-                            <MenuItem onClick={() => { setOpenDialog(true) }}>
-                                Delete
-                            </MenuItem>
-                        </Menu>
-
-                    </IconButton> : <></>
+                                action: () => {
+                                    setOpenDialog(true)
+                                },
+                                label: 'Delete'
+                            }]}
+                        />
+                        : <></>
 
                 }
             ></CardHeader>
             <CardContent>
-                <Accordion >
+                <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>{post.comments.length} comments</AccordionSummary>
                     <AccordionDetails>
                         {post.comments.map(comment => <Comment key={comment.id} comment={comment} />)}
-                        {post.canComment && <Button variant="contained" onClick={() => {
+                        {post.canComment && <Button sx={{ marginTop: '20px' }} variant="contained" onClick={() => {
                             navigate(`/posts/${post.id}/new-comment`);
                         }} >Add comment</Button>}
                     </AccordionDetails>

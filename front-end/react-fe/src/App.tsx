@@ -10,18 +10,32 @@ import PostEdit from './features/Posts/PostEdit';
 import PostCreate from './features/Posts/PostCreate';
 import CommentCreate from './features/Comments/CommentCreate';
 import Signup from './features/Auth/Signup';
+import AuthGuard from './features/Auth/AuthGuard';
 
 const App: React.FC<any> = () => {
   return (
     <AuthProvider>
 
       <Routes>
-        <Route  path="/" element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to={'/posts'} />} />
           <Route path='posts' element={<PostsList />} />
-          <Route path="posts/:id" element={<PostEdit />} />
-          <Route path="posts/new" element={<PostCreate />} />
-          <Route path="posts/:id/new-comment" element={<CommentCreate />} />
+
+          <Route path="posts/:id" element={
+            <AuthGuard>
+              <PostEdit />
+            </AuthGuard>
+          } />
+          <Route path="posts/new" element={
+            <AuthGuard>
+              <PostCreate />
+            </AuthGuard>
+          } />
+          <Route path="posts/:id/new-comment" element={
+            <AuthGuard>
+              <CommentCreate />
+            </AuthGuard>
+          } />
           <Route path="signup" element={<Signup />} />
           <Route path="login" element={<Login />} />
           <Route path="logout" element={<Logout />} />
