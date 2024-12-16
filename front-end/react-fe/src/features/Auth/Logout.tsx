@@ -1,7 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
 import AppCard from '../../shared/comps/AppCard';
-import { Box, Button, CardActions, CardContent, Typography } from '@mui/material';
+import { Button, CardActions, CardContent, Typography } from '@mui/material';
 
 export default function Logout() {
     const auth = useAuth();

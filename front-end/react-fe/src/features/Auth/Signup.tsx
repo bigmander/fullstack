@@ -4,7 +4,7 @@ import httpService from '../../shared/services/HttpService';
 
 import { useNavigate } from 'react-router-dom';
 import AppCard from '../../shared/comps/AppCard';
-import { Box, Button, FormControl, FormLabel, TextField } from '@mui/material';
+import { Box, Button, FormControl, TextField } from '@mui/material';
 import { SignupForm } from './SignupForm';
 
 export default function Signup() {
