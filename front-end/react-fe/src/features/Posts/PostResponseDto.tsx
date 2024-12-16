@@ -13,12 +13,13 @@ export interface PostResponseDto {
 
 export interface CommentDto {
     id: string;
+    postId: string;
+    author: string;
     title: string;
     body: string;
-    author?: string;
-    lastModification?: Date;
-    createdAt?: Date;
+    createdAt: Date | string;
+    lastModification?: Date|string;
+    canDelete: boolean;
     updatedBy?: string;
-    postId: string;
 
 }

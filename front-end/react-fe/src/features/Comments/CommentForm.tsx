@@ -2,11 +2,19 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { Controller, useFormContext } from "react-hook-form";
+import { FormGroup } from "@mui/material";
 
-const PostForm = (
+
+const CommentForm = (
+
+
 ) => {
+
+
     const {
-        control
+        control,
+        watch
+
     } = useFormContext()
 
     console.log(control);
@@ -50,26 +58,9 @@ const PostForm = (
         />
 
 
-        <Controller
-            control={control}
-            name="canComment"
-            render={({ field }) => (
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={field.value}
-                            onChange={field.onChange}
-                        />
-                    }
-                    label="Can Comment"
-                />
-            )}
-        />
-
-
     </>
 
 
 
 }
-export default PostForm;
+export default CommentForm;

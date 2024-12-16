@@ -1,34 +1,41 @@
 import { SubmitHandler, Controller, useForm } from 'react-hook-form';
 import { useAuth } from './AuthProvider';
-import { AuthSignInPayload } from './AuthSignInPayload';
+import httpService from '../../shared/services/HttpService';
+
 import { useNavigate } from 'react-router-dom';
 import AppCard from '../../shared/comps/AppCard';
 import { Box, Button, FormControl, FormLabel, TextField } from '@mui/material';
+import { SignupForm } from './SignupForm';
 
-export default function Login() {
+export default function Signup() {
     const auth = useAuth();
     let navigate = useNavigate();
 
     const defaultValues = {
         email:
-            'test@test.com',
-        // 'test2@example.com', 
-        // 'user@example.com',
-        password: 'best_Passw0rd'
+            // 'test@test.com',
+            // 'test2@example.com', 
+            // 'user@example.com',
+            'user3@example.com',
+        password: 'best_Passw0rd',
+        confirmPassword: 'best_Passw0rd'
     };
     const {
         control,
         handleSubmit,
 
-    } = useForm<AuthSignInPayload>({
+    } = useForm<SignupForm>({
         defaultValues
     })
 
-    const onSubmit: SubmitHandler<AuthSignInPayload> = (data) => {
-        auth.signIn(data).then(() => {
-            navigate('/');
-
-        }, console.error);
+    const onSubmit: SubmitHandler<SignupForm> = (formValues) => {
+        httpService.post('/signup', formValues)
+            .then(() =>
+                auth.signIn(formValues)
+            )
+            .then(() => {
+                navigate('/');
+            })
     }
 
     return (
@@ -71,12 +78,38 @@ export default function Login() {
                         render={({ field, formState: { errors } }) =>
                             <TextField
                                 {...field}
-                                
+
                                 defaultValue={defaultValues.password}
                                 type='password'
                                 label="Password"
                                 fullWidth
                                 error={'password' in errors}
+                                color='primary'
+                            />
+
+                        }
+                    />
+                </FormControl>
+
+                <FormControl>
+                    <Controller
+                        control={control}
+                        name='confirmPassword'
+                        rules={{
+                            required: true,
+                            validate: (currentValue, { password }) => {
+                                return currentValue === password;
+                            }
+                        }}
+                        render={({ field, formState: { errors } }) =>
+                            <TextField
+                                {...field}
+
+                                defaultValue={defaultValues.confirmPassword}
+                                type='password'
+                                label="Confirm Password"
+                                fullWidth
+                                error={'confirmPassword' in errors}
                                 color='primary'
                             />
 

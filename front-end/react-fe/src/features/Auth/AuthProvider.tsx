@@ -20,7 +20,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({
         const rawSession = localStorage.getItem('session');
         if (rawSession !== null) {
             const session = JSON.parse(rawSession);
-            console.log('session', session)
             setUserInfo(session.email)
         } else {
             setUserInfo(null!);

@@ -1,19 +1,23 @@
 import React, { useState } from "react"
+import httpService from '../../shared/services/HttpService';
 import { PostProps } from "./PostProps";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, Menu, MenuItem } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem } from "@mui/material";
 import Comment from "../Comments/Comment";
 
 const Post: React.FC<PostProps> = ({
     post
 }) => {
+    const navigate = useNavigate();
     const [$menu, set$Menu] = useState<HTMLElement | null>(null);
+    const [isOpenDialog, setOpenDialog] = useState<boolean>(false);
     // const isMenuOpen = Boolean($menu);
     const handleClose = () => {
         if ($menu !== null) {
@@ -30,8 +34,6 @@ const Post: React.FC<PostProps> = ({
 
     return <>
         <Card variant="outlined">
-
-
             <CardHeader
                 title={post.title}
                 subheader={post.createdAt.toString()}
@@ -48,8 +50,8 @@ const Post: React.FC<PostProps> = ({
                             <MenuItem >
                                 <Link to={`/posts/${post.id}`}>Edit</Link>
                             </MenuItem>
-                            <MenuItem>
-                                <Link to={`/posts/${post.id}`}>Delete</Link>
+                            <MenuItem onClick={() => { setOpenDialog(true) }}>
+                                Delete
                             </MenuItem>
                         </Menu>
 
@@ -57,14 +59,50 @@ const Post: React.FC<PostProps> = ({
 
                 }
             ></CardHeader>
+            <CardContent>
+                <Accordion >
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>{post.comments.length} comments</AccordionSummary>
+                    <AccordionDetails>
+                        {post.comments.map(comment => <Comment key={comment.id} comment={comment} />)}
+                        {post.canComment && <Button variant="contained" onClick={() => {
+                            navigate(`/posts/${post.id}/new-comment`);
+                        }} >Add comment</Button>}
+                    </AccordionDetails>
+                </Accordion>
+            </CardContent>
         </Card>
-        <Accordion >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>{post.comments.length} comments</AccordionSummary>
-            <AccordionDetails>
-                {post.comments.map(comment => <Comment comment={comment} />)}
-                {!post.canComment && <Button variant="contained">Add comment</Button>}
-            </AccordionDetails>
-        </Accordion>
+        <br />
+
+        <Dialog
+            open={isOpenDialog}
+            onClose={() => { setOpenDialog(false) }}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                Delete a Post
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    Do you want to delete this post?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => {
+                    setOpenDialog(false);
+                }}>Cancel</Button>
+                <Button variant="contained" onClick={() => {
+                    httpService.delete('/posts/' + post.id)
+                        .then(response => response.data)
+                        .then(() => {
+                            setOpenDialog(false);
+                            navigate('/');
+                        });
+                }} autoFocus>
+                    Confirm
+                </Button>
+            </DialogActions>
+        </Dialog>
     </>
 }
 export default Post;
